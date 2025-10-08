@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: video-chat-frontend
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_SIGNALING_SERVER_URL
+        # You need to set this in Render dashboard to your signaling server URL
+        # Example: https://video-chat-signaling.onrender.com
+
