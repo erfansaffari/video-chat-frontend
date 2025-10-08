@@ -38,7 +38,7 @@ export default function Home() {
                 <span className="bg-gradient-to-r from-[#FDB714] via-[#FFCC00] to-[#FDB714] bg-clip-text text-transparent animate-gradient">
                   Campus
                 </span>
-                <span className="text-white"> Connect</span>
+                <span className="text-white">Shuffle</span>
               </h1>
               <div className="flex items-center justify-center gap-3 text-xl text-white/80">
                 <div className="h-px w-12 bg-gradient-to-r from-transparent to-[#FDB714]"></div>

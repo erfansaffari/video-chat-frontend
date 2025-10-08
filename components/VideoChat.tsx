@@ -599,7 +599,7 @@ export default function VideoChat() {
 
       {/* University Badge Overlay */}
       <div className="absolute top-4 left-4 px-4 py-2 bg-black/40 backdrop-blur-xl rounded-full border border-[#FDB714]/30">
-        <span className="text-[#FDB714] font-bold text-sm">Campus Connect</span>
+        <span className="text-[#FDB714] font-bold text-sm">CampusShuffle</span>
       </div>
     </div>
   );
