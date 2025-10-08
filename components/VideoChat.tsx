@@ -94,7 +94,7 @@ export default function VideoChat() {
 
     const peer = new SimplePeer({
       initiator,
-      trickle: true,
+      trickle: false, // Disable trickle ICE - gather all candidates first
       stream,
       config: {
         iceServers: [
@@ -130,11 +130,23 @@ export default function VideoChat() {
     // Monitor ICE connection state
     peer.on('iceStateChange', (iceConnectionState, iceGatheringState) => {
       console.log('🧊 ICE State:', iceConnectionState, '| Gathering:', iceGatheringState);
+      
+      if (iceConnectionState === 'connected' || iceConnectionState === 'completed') {
+        console.log('✅ ICE Connected! Video should be flowing now.');
+      } else if (iceConnectionState === 'failed') {
+        console.error('❌ ICE Connection Failed! Trying to restart...');
+        // Try to restart ICE
+        if (peer._pc) {
+          peer._pc.restartIce?.();
+        }
+      } else if (iceConnectionState === 'disconnected') {
+        console.warn('⚠️ ICE Disconnected, waiting for reconnection...');
+      }
     });
 
     // Monitor connection state changes
     peer.on('connect', () => {
-      console.log('✅ Peer connected successfully!');
+      console.log('✅ Peer data channel connected successfully!');
     });
 
     // Handle incoming stream
