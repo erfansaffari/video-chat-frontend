@@ -494,48 +494,68 @@ export default function VideoChat() {
         />
       </div>
 
-      {/* Status overlay */}
+      {/* Status overlay with University theme */}
       {connectionStatus !== 'connected' && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-900 bg-opacity-90">
-          <div className="text-center px-6">
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-black via-[#4B2080]/30 to-black backdrop-blur-md">
+          <div className="text-center px-6 glass-strong rounded-3xl p-12 border border-white/20">
             {connectionStatus === 'requesting-permissions' && (
               <>
-                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                <h2 className="text-2xl font-semibold text-white mb-2">Requesting Permissions...</h2>
-                <p className="text-gray-400">Please allow camera and microphone access</p>
+                <div className="relative w-20 h-20 mx-auto mb-6">
+                  <div className="absolute inset-0 rounded-full border-4 border-[#FDB714]/30"></div>
+                  <div className="absolute inset-0 rounded-full border-t-4 border-[#FDB714] animate-spin"></div>
+                </div>
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-[#FDB714] to-[#FFCC00] bg-clip-text text-transparent mb-3">
+                  Requesting Permissions
+                </h2>
+                <p className="text-white/70">Please allow camera and microphone access</p>
               </>
             )}
 
             {connectionStatus === 'waiting' && (
               <>
-                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                <h2 className="text-2xl font-semibold text-white mb-2">Looking for a match...</h2>
-                <p className="text-gray-400">Waiting for someone to connect with you</p>
+                <div className="relative w-20 h-20 mx-auto mb-6">
+                  <div className="absolute inset-0 rounded-full border-4 border-[#FFCC00]/30"></div>
+                  <div className="absolute inset-0 rounded-full border-t-4 border-[#FFCC00] animate-spin"></div>
+                </div>
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-[#FFCC00] to-[#FDB714] bg-clip-text text-transparent mb-3">
+                  Finding a Student...
+                </h2>
+                <p className="text-white/70">Matching you with someone from campus</p>
+                <div className="mt-4 flex items-center justify-center gap-2">
+                  <div className="w-2 h-2 bg-[#FDB714] rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-[#FFCC00] rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                  <div className="w-2 h-2 bg-[#FDB714] rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                </div>
               </>
             )}
 
             {connectionStatus === 'connecting' && (
               <>
-                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-500 mx-auto mb-4"></div>
-                <h2 className="text-2xl font-semibold text-white mb-2">Connecting...</h2>
-                <p className="text-gray-400">Establishing connection with your match</p>
+                <div className="relative w-20 h-20 mx-auto mb-6">
+                  <div className="absolute inset-0 rounded-full border-4 border-[#4B2080]/30"></div>
+                  <div className="absolute inset-0 rounded-full border-t-4 border-[#FFCC00] animate-spin"></div>
+                </div>
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-[#FDB714] to-[#FFCC00] bg-clip-text text-transparent mb-3">
+                  Connecting...
+                </h2>
+                <p className="text-white/70">Establishing secure connection</p>
               </>
             )}
 
             {connectionStatus === 'error' && error && (
               <>
-                <div className="text-red-500 mb-4">
-                  <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="text-red-400 mb-4">
+                  <svg className="w-20 h-20 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h2 className="text-2xl font-semibold text-white mb-2">Connection Error</h2>
-                <p className="text-gray-400 mb-6">{error.message}</p>
+                <h2 className="text-3xl font-bold text-white mb-3">Connection Error</h2>
+                <p className="text-white/70 mb-6">{error.message}</p>
                 
                 {error.type === 'permissions' && (
                   <button
                     onClick={retryPermissions}
-                    className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
+                    className="px-8 py-4 bg-gradient-to-r from-[#FDB714] to-[#FFCC00] hover:from-[#FFCC00] hover:to-[#FDB714] text-black font-bold rounded-full shadow-2xl transition-all duration-300 transform hover:scale-105"
                   >
                     Try Again
                   </button>
@@ -553,28 +573,33 @@ export default function VideoChat() {
         </div>
       )}
 
-      {/* Control buttons */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-4">
+      {/* Control buttons with University theme */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-4">
         <button
           onClick={handleNext}
           disabled={connectionStatus !== 'connected'}
-          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg shadow-lg transition-colors flex items-center gap-2"
+          className="group px-8 py-4 bg-gradient-to-r from-[#FDB714] to-[#FFCC00] hover:from-[#FFCC00] hover:to-[#FDB714] disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-black font-bold rounded-full shadow-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center gap-3"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
           </svg>
-          Next
+          Next Student
         </button>
 
         <button
           onClick={handleStop}
-          className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-lg transition-colors flex items-center gap-2"
+          className="group px-8 py-4 bg-white/10 hover:bg-[#4B2080]/80 backdrop-blur-xl text-white font-bold rounded-full shadow-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center gap-3 border border-white/20"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
-          Stop
+          End Chat
         </button>
+      </div>
+
+      {/* University Badge Overlay */}
+      <div className="absolute top-4 left-4 px-4 py-2 bg-black/40 backdrop-blur-xl rounded-full border border-[#FDB714]/30">
+        <span className="text-[#FDB714] font-bold text-sm">Campus Connect</span>
       </div>
     </div>
   );
