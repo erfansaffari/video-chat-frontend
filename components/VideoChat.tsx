@@ -101,17 +101,40 @@ export default function VideoChat() {
           { urls: 'stun:stun.l.google.com:19302' },
           { urls: 'stun:stun1.l.google.com:19302' },
           { urls: 'stun:stun2.l.google.com:19302' },
+          { urls: 'stun:stun3.l.google.com:19302' },
+          { urls: 'stun:stun4.l.google.com:19302' },
+          // Free TURN servers for better connectivity
+          {
+            urls: 'turn:openrelay.metered.ca:80',
+            username: 'openrelayproject',
+            credential: 'openrelayproject'
+          },
+          {
+            urls: 'turn:openrelay.metered.ca:443',
+            username: 'openrelayproject',
+            credential: 'openrelayproject'
+          }
         ]
       }
     });
 
     // Handle signals (send to signaling server)
     peer.on('signal', (signal) => {
-      console.log('📡 Sending signal to partner');
+      console.log('📡 Sending signal to partner', signal.type || 'candidate');
       socketRef.current?.emit('signal', {
         to: targetPartnerId,
         signal
       });
+    });
+
+    // Monitor ICE connection state
+    peer.on('iceStateChange', (iceConnectionState, iceGatheringState) => {
+      console.log('🧊 ICE State:', iceConnectionState, '| Gathering:', iceGatheringState);
+    });
+
+    // Monitor connection state changes
+    peer.on('connect', () => {
+      console.log('✅ Peer connected successfully!');
     });
 
     // Handle incoming stream
