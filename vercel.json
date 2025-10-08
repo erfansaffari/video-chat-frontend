@@ -1,0 +1,11 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "env": {
+    "NEXT_PUBLIC_SIGNALING_SERVER_URL": "https://video-chat-signaling-server-ibfo.onrender.com",
+    "NEXT_PUBLIC_TURN_SERVER": "142.93.146.223",
+    "NEXT_PUBLIC_TURN_USERNAME": "videochat",
+    "NEXT_PUBLIC_TURN_PASSWORD": "LFO7Jmx8St5Wd43mZlimeg=="
+  }
+}
