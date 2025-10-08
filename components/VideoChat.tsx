@@ -94,8 +94,16 @@ export default function VideoChat() {
 
     const peer = new SimplePeer({
       initiator,
-      trickle: false, // Disable trickle ICE - gather all candidates first
+      trickle: true,
       stream,
+      offerOptions: {
+        offerToReceiveAudio: true,
+        offerToReceiveVideo: true
+      },
+      answerOptions: {
+        offerToReceiveAudio: true,
+        offerToReceiveVideo: true
+      },
       config: {
         iceServers: [
           { urls: 'stun:stun.l.google.com:19302' },
@@ -111,6 +119,11 @@ export default function VideoChat() {
           },
           {
             urls: 'turn:openrelay.metered.ca:443',
+            username: 'openrelayproject',
+            credential: 'openrelayproject'
+          },
+          {
+            urls: 'turn:openrelay.metered.ca:443?transport=tcp',
             username: 'openrelayproject',
             credential: 'openrelayproject'
           }
@@ -159,13 +172,21 @@ export default function VideoChat() {
       remoteStreamRef.current = remoteStream;
       
       if (remoteVideoRef.current) {
+        console.log('✅ Attaching remote stream to video element');
         remoteVideoRef.current.srcObject = remoteStream;
-        console.log('✅ Remote stream attached to video element');
         
-        // Force video to play
-        remoteVideoRef.current.play().catch(err => {
-          console.error('❌ Error playing remote video:', err);
-        });
+        // Ensure video is ready to play
+        remoteVideoRef.current.onloadedmetadata = () => {
+          console.log('📹 Video metadata loaded, starting playback');
+          remoteVideoRef.current?.play()
+            .then(() => console.log('✅ Remote video playing!'))
+            .catch(err => console.error('❌ Error playing remote video:', err));
+        };
+        
+        // Also try to play immediately
+        remoteVideoRef.current.play()
+          .then(() => console.log('✅ Remote video started immediately'))
+          .catch(err => console.log('⏸ Waiting for metadata before playing...'));
       } else {
         console.error('❌ Remote video ref is null!');
       }
@@ -429,7 +450,9 @@ export default function VideoChat() {
         ref={remoteVideoRef}
         autoPlay
         playsInline
-        className="w-full h-full object-cover"
+        muted={false}
+        controls={false}
+        className="w-full h-full object-cover bg-black"
       />
 
       {/* Local video (small, bottom-right corner) */}
