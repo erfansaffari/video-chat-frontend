@@ -92,6 +92,38 @@ export default function VideoChat() {
   const createPeer = useCallback((initiator: boolean, stream: MediaStream, targetPartnerId: string) => {
     console.log(`🔗 Creating peer connection (initiator: ${initiator})`);
 
+    // Configure ICE servers with DigitalOcean TURN server
+    const turnServer = process.env.NEXT_PUBLIC_TURN_SERVER;
+    const turnUsername = process.env.NEXT_PUBLIC_TURN_USERNAME;
+    const turnPassword = process.env.NEXT_PUBLIC_TURN_PASSWORD;
+
+    const iceServers: RTCIceServer[] = [
+      // Google STUN servers for NAT discovery
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+    ];
+
+    // Add DigitalOcean TURN server if credentials are available
+    if (turnServer && turnUsername && turnPassword) {
+      // Add UDP TURN server
+      iceServers.push({
+        urls: `turn:${turnServer}:3478?transport=udp`,
+        username: turnUsername,
+        credential: turnPassword
+      } as RTCIceServer);
+      // Add TCP TURN server
+      iceServers.push({
+        urls: `turn:${turnServer}:3478?transport=tcp`,
+        username: turnUsername,
+        credential: turnPassword
+      } as RTCIceServer);
+      console.log('🔄 Using DigitalOcean TURN server:', turnServer);
+    } else {
+      console.warn('⚠️ TURN server credentials not configured');
+    }
+
+    console.log('🌐 ICE Servers configured:', iceServers.length, 'servers');
+
     const peer = new SimplePeer({
       initiator,
       trickle: true,
@@ -105,39 +137,7 @@ export default function VideoChat() {
         offerToReceiveVideo: true
       },
       config: {
-        iceServers: [
-          // Multiple STUN servers for better discovery
-          { urls: 'stun:stun.l.google.com:19302' },
-          { urls: 'stun:stun1.l.google.com:19302' },
-          { urls: 'stun:stun2.l.google.com:19302' },
-          { urls: 'stun:global.stun.twilio.com:3478' },
-          // Alternative free TURN servers (more reliable)
-          {
-            urls: 'turn:turn.anyfirewall.com:443?transport=tcp',
-            username: 'webrtc',
-            credential: 'webrtc'
-          },
-          {
-            urls: 'turn:numb.viagenie.ca',
-            username: 'webrtc@live.com',
-            credential: 'muazkh'
-          },
-          {
-            urls: 'turn:relay.metered.ca:80',
-            username: '85d6ac85c85c8781cd8129ea',
-            credential: 'sMBI+5+bjdFjEfs7'
-          },
-          {
-            urls: 'turn:relay.metered.ca:443',
-            username: '85d6ac85c85c8781cd8129ea',
-            credential: 'sMBI+5+bjdFjEfs7'
-          },
-          {
-            urls: 'turn:relay.metered.ca:443?transport=tcp',
-            username: '85d6ac85c85c8781cd8129ea',
-            credential: 'sMBI+5+bjdFjEfs7'
-          }
-        ],
+        iceServers: iceServers,
         iceTransportPolicy: 'all',
         iceCandidatePoolSize: 10,
         bundlePolicy: 'max-bundle',
@@ -147,7 +147,21 @@ export default function VideoChat() {
 
     // Handle signals (send to signaling server)
     peer.on('signal', (signal) => {
-      console.log('📡 Sending signal to partner', signal.type || 'candidate');
+      const signalType = signal.type || 'candidate';
+      console.log('📡 Sending signal to partner:', signalType);
+      
+      // Log ICE candidates to verify TURN usage
+      if ('candidate' in signal && signal.candidate) {
+        const candidateStr = String(signal.candidate);
+        if (candidateStr.includes('relay')) {
+          console.log('🔄 TURN relay candidate detected!', candidateStr.split(' ')[4]);
+        } else if (candidateStr.includes('srflx')) {
+          console.log('🌐 STUN srflx candidate:', candidateStr.split(' ')[4]);
+        } else if (candidateStr.includes('host')) {
+          console.log('🏠 Host candidate:', candidateStr.split(' ')[4]);
+        }
+      }
+      
       socketRef.current?.emit('signal', {
         to: targetPartnerId,
         signal
