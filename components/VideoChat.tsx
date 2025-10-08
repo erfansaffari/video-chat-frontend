@@ -139,11 +139,27 @@ export default function VideoChat() {
 
     // Handle incoming stream
     peer.on('stream', (remoteStream) => {
-      console.log('🎥 Received remote stream');
+      console.log('🎥 Received remote stream', {
+        id: remoteStream.id,
+        active: remoteStream.active,
+        videoTracks: remoteStream.getVideoTracks().length,
+        audioTracks: remoteStream.getAudioTracks().length,
+        videoEnabled: remoteStream.getVideoTracks()[0]?.enabled,
+        audioEnabled: remoteStream.getAudioTracks()[0]?.enabled
+      });
+      
       remoteStreamRef.current = remoteStream;
       
       if (remoteVideoRef.current) {
         remoteVideoRef.current.srcObject = remoteStream;
+        console.log('✅ Remote stream attached to video element');
+        
+        // Force video to play
+        remoteVideoRef.current.play().catch(err => {
+          console.error('❌ Error playing remote video:', err);
+        });
+      } else {
+        console.error('❌ Remote video ref is null!');
       }
       
       setConnectionStatus('connected');
@@ -308,13 +324,16 @@ export default function VideoChat() {
         });
 
         socket.on('signal', (data: SignalEvent) => {
-          console.log('📡 Received signal from partner');
+          console.log('📡 Received signal from partner', data.signal.type || 'candidate');
           if (peerRef.current) {
             try {
               peerRef.current.signal(data.signal);
+              console.log('✓ Signal processed successfully');
             } catch (err) {
-              console.error('Error processing signal:', err);
+              console.error('❌ Error processing signal:', err);
             }
+          } else {
+            console.error('❌ No peer connection exists to process signal!');
           }
         });
 
