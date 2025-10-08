@@ -138,8 +138,10 @@ export default function VideoChat() {
             credential: 'sMBI+5+bjdFjEfs7'
           }
         ],
-        iceTransportPolicy: 'all', // Try all connection types
-        iceCandidatePoolSize: 10 // Generate more candidates
+        iceTransportPolicy: 'all',
+        iceCandidatePoolSize: 10,
+        bundlePolicy: 'max-bundle',
+        rtcpMuxPolicy: 'require'
       }
     });
 
