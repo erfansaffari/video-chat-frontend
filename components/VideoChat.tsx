@@ -134,11 +134,7 @@ export default function VideoChat() {
       if (iceConnectionState === 'connected' || iceConnectionState === 'completed') {
         console.log('✅ ICE Connected! Video should be flowing now.');
       } else if (iceConnectionState === 'failed') {
-        console.error('❌ ICE Connection Failed! Trying to restart...');
-        // Try to restart ICE
-        if (peer._pc) {
-          peer._pc.restartIce?.();
-        }
+        console.error('❌ ICE Connection Failed!');
       } else if (iceConnectionState === 'disconnected') {
         console.warn('⚠️ ICE Disconnected, waiting for reconnection...');
       }
