@@ -106,28 +106,40 @@ export default function VideoChat() {
       },
       config: {
         iceServers: [
+          // Multiple STUN servers for better discovery
           { urls: 'stun:stun.l.google.com:19302' },
           { urls: 'stun:stun1.l.google.com:19302' },
           { urls: 'stun:stun2.l.google.com:19302' },
-          { urls: 'stun:stun3.l.google.com:19302' },
-          { urls: 'stun:stun4.l.google.com:19302' },
-          // Free TURN servers for better connectivity
+          { urls: 'stun:global.stun.twilio.com:3478' },
+          // Alternative free TURN servers (more reliable)
           {
-            urls: 'turn:openrelay.metered.ca:80',
-            username: 'openrelayproject',
-            credential: 'openrelayproject'
+            urls: 'turn:turn.anyfirewall.com:443?transport=tcp',
+            username: 'webrtc',
+            credential: 'webrtc'
           },
           {
-            urls: 'turn:openrelay.metered.ca:443',
-            username: 'openrelayproject',
-            credential: 'openrelayproject'
+            urls: 'turn:numb.viagenie.ca',
+            username: 'webrtc@live.com',
+            credential: 'muazkh'
           },
           {
-            urls: 'turn:openrelay.metered.ca:443?transport=tcp',
-            username: 'openrelayproject',
-            credential: 'openrelayproject'
+            urls: 'turn:relay.metered.ca:80',
+            username: '85d6ac85c85c8781cd8129ea',
+            credential: 'sMBI+5+bjdFjEfs7'
+          },
+          {
+            urls: 'turn:relay.metered.ca:443',
+            username: '85d6ac85c85c8781cd8129ea',
+            credential: 'sMBI+5+bjdFjEfs7'
+          },
+          {
+            urls: 'turn:relay.metered.ca:443?transport=tcp',
+            username: '85d6ac85c85c8781cd8129ea',
+            credential: 'sMBI+5+bjdFjEfs7'
           }
-        ]
+        ],
+        iceTransportPolicy: 'all', // Try all connection types
+        iceCandidatePoolSize: 10 // Generate more candidates
       }
     });
 
