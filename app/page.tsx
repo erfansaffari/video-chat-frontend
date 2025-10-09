@@ -59,7 +59,7 @@ export default function Home() {
             {/* CTA Button */}
             <div className="flex justify-center mb-8">
               <Link
-                href="/chat"
+                href="/auth"
                 className="group relative px-12 py-5 bg-gradient-to-r from-[#FDB714] to-[#FFCC00] text-black text-xl font-bold rounded-full shadow-2xl transform transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden"
               >
                 <span className="relative z-10 flex items-center gap-3">

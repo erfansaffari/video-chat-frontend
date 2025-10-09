@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.74.0",
     "@types/simple-peer": "^9.11.8",
     "next": "15.5.4",
     "react": "19.1.0",
