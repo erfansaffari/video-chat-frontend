@@ -17,7 +17,7 @@ export default function ChatPage() {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (event === 'SIGNED_OUT') {
-          router.push('/auth');
+          router.push('/dashboard');
         }
       }
     );
@@ -31,7 +31,7 @@ export default function ChatPage() {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
-      router.push('/auth');
+      router.push('/dashboard');
       return;
     }
 

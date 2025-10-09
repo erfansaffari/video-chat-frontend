@@ -601,6 +601,19 @@ export default function VideoChat() {
       <div className="absolute top-4 left-4 px-4 py-2 bg-black/40 backdrop-blur-xl rounded-full border border-[#FDB714]/30">
         <span className="text-[#FDB714] font-bold text-sm">CampusShuffle</span>
       </div>
+
+      {/* Back to Dashboard Button */}
+      <div className="absolute top-4 right-4">
+        <a
+          href="/dashboard"
+          className="px-4 py-2 bg-black/40 hover:bg-black/60 backdrop-blur-xl text-white text-sm font-semibold rounded-full border border-white/20 transition-all flex items-center gap-2"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Dashboard
+        </a>
+      </div>
     </div>
   );
 }

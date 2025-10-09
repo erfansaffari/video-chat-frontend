@@ -13,6 +13,7 @@ const ALLOWED_DOMAINS = [
 export default function Auth() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [isSignUp, setIsSignUp] = useState(true);
@@ -32,23 +33,52 @@ export default function Auth() {
       return;
     }
 
+    // Validate password confirmation
+    if (password !== confirmPassword) {
+      setMessage('❌ Passwords do not match!');
+      return;
+    }
+
+    // Check password strength
+    if (password.length < 6) {
+      setMessage('❌ Password must be at least 6 characters');
+      return;
+    }
+
     setLoading(true);
     setMessage('');
+
+    // Check if user already exists
+    const { data: existingUser } = await supabase
+      .from('auth.users')
+      .select('email')
+      .eq('email', email)
+      .single();
 
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/chat`,
+        emailRedirectTo: `${window.location.origin}/dashboard`,
       }
     });
 
     setLoading(false);
 
     if (error) {
-      setMessage(`❌ Error: ${error.message}`);
+      if (error.message.includes('already registered')) {
+        setMessage('❌ This email is already registered. Please sign in instead.');
+      } else {
+        setMessage(`❌ Error: ${error.message}`);
+      }
+    } else if (data.user?.identities?.length === 0) {
+      // User already exists but hasn't verified email
+      setMessage('❌ This email is already registered. Please check your email for the verification link or sign in.');
     } else {
       setMessage('✅ Check your university email for the verification link!');
+      setEmail('');
+      setPassword('');
+      setConfirmPassword('');
     }
   };
 
@@ -72,7 +102,7 @@ export default function Auth() {
         setMessage('⚠️ Please verify your email first!');
         await supabase.auth.signOut();
       } else {
-        window.location.href = '/chat';
+        window.location.href = '/dashboard';
       }
     }
   };
@@ -118,6 +148,24 @@ export default function Auth() {
             </p>
           )}
         </div>
+
+        {isSignUp && (
+          <div>
+            <label className="block text-white/80 mb-2">Confirm Password</label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="••••••••"
+              required
+              minLength={6}
+              className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-[#FDB714] transition-colors"
+            />
+            <p className="text-white/50 text-xs mt-1">
+              Re-enter your password
+            </p>
+          </div>
+        )}
 
         <button
           type="submit"

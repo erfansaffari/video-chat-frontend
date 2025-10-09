@@ -1,8 +1,44 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase';
+import { useRouter } from 'next/navigation';
 import Auth from '@/components/Auth';
 
 export default function AuthPage() {
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  async function checkUser() {
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // If user is logged in and verified, redirect to dashboard
+    if (user && user.email_confirmed_at) {
+      router.push('/dashboard');
+      return;
+    }
+
+    setLoading(false);
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-[#4B2080] to-black">
+        <div className="text-center">
+          <div className="relative w-20 h-20 mx-auto mb-6">
+            <div className="absolute inset-0 rounded-full border-4 border-[#FFCC00]/30"></div>
+            <div className="absolute inset-0 rounded-full border-t-4 border-[#FFCC00] animate-spin"></div>
+          </div>
+          <p className="text-white text-xl">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <main className="min-h-screen relative overflow-hidden">
       {/* Animated Background */}
